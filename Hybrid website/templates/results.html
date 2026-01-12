@@ -1,0 +1,880 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: #8899aa;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+        }
+
+        .metrics-section {
+            max-width: 1400px;
+            margin: 0 auto 50px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            padding-left: 10px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .metric-card h3 {
+            font-size: 16px;
+            color: #8899aa;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .metric-unit {
+            font-size: 24px;
+            color: #8899aa;
+            margin-left: 5px;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .comparison-card h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            color: #8899aa;
+        }
+
+        td {
+            color: #ffffff;
+        }
+
+        .summary-section {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .summary-table {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .summary-actions {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .summary-actions h3 {
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+
+        .btn-download {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .parameter-controls h4 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+
+        .parameter-row {
+            display: flex;
+            color: white;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .parameter-label {
+            color: #8899aa;
+            min-width: 80px;
+        }
+
+        .parameter-input {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            border-radius: 6px;
+            color: #fff;
+            padding: 8px 12px;
+            width: 80px;
+        }
+
+        .parameter-input:focus {
+            outline: none;
+            border-color: #2dd4bf;
+        }
+
+        .btn-update {
+            background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%);
+            color: #0f172a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-update:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(45, 212, 191, 0.3);
+        }
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(33, 150, 243, 0.4);
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #94a3b8, #64748b);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(148, 163, 184, 0.4);
+        }
+
+        .summary-info {
+            display: grid;
+            gap: 20px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+
+        .info-label {
+            color: #8899aa;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .no-data-message {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            margin: 40px auto;
+            max-width: 600px;
+        }
+
+        .no-data-message h2 {
+            color: #8899aa;
+            margin-bottom: 20px;
+        }
+
+        .no-data-message p {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .summary-section {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 36px;
+            }
+        }
+    </style>
+
+    <div class="header">
+        <h1>Hybrid Firefly–Antlion Optimizer</h1>
+        <p class="subtitle">Energy-Efficient Cloud Task Scheduling</p>
+    </div>
+
+    <div id="noDataMessage" class="no-data-message" style="display: none;">
+        <h2>No Results Available</h2>
+        <p>Please run an optimization from the dashboard first to see results.</p>
+        <button class="btn-back" onclick="window.location.href='/dashboard'">Go to Dashboard</button>
+    </div>
+
+    <div id="resultsContent">
+        <div class="metrics-section">
+            <h2 class="section-title">Performance Metrics</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <h3>Response Time</h3>
+                    <div class="metric-value" id="metricResponseTime">1.45<span class="metric-unit">s</span></div>
+                </div>
+                <div class="metric-card">
+                    <h3>Energy Consumption</h3>
+                    <div class="metric-value" id="metricEnergy">35.2<span class="metric-unit">kWh</span></div>
+                </div>
+                <div class="metric-card">
+                    <h3>Makespan</h3>
+                    <div class="metric-value" id="metricMakespan">150<span class="metric-unit">s</span></div>
+                </div>
+                <div class="metric-card">
+                    <h3>Resource Utilization</h3>
+                    <div class="metric-value" id="metricUtilization">78<span class="metric-unit">%</span></div>
+                </div>
+            </div>
+
+            <h2 class="section-title">Algorithm Comparison</h2>
+            <div id="loadingMessage" class="loading-message" style="display: block; text-align: center; padding: 20px; color: #8899aa;">
+                Loading comparison data...
+            </div>
+            <div class="chart-container" id="chartContainer" style="display: none;">
+                <div class="chart-wrapper">
+                    <canvas id="convergenceChart"></canvas>
+                </div>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <h3>Resource Utilization</h3>
+                    <div class="chart-wrapper" style="height: 250px;">
+                        <canvas id="resourceChart"></canvas>
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <h3>Response Time (Lower is Better)</h3>
+                    <div class="chart-wrapper" style="height: 250px;">
+                        <canvas id="responseChart"></canvas>
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <h3>Throughput (Higher is Better)</h3>
+                    <div class="chart-wrapper" style="height: 250px;">
+                        <canvas id="throughputChart"></canvas>
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <h3>Energy Cost (Lower is Better)</h3>
+                    <div class="chart-wrapper" style="height: 250px;">
+                        <canvas id="energyChart"></canvas>
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <h3>Makespan (Lower is Better)</h3>
+                    <div class="chart-wrapper" style="height: 250px;">
+                        <canvas id="makespanChart"></canvas>
+                    </div>
+                </div>
+                <div class="comparison-card">
+                    <h3>Load Balance Score</h3>
+                    <div class="chart-wrapper" style="height: 250px;">
+                        <canvas id="loadBalanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-section">
+            <h2 class="section-title">Comprehensive Results Summary</h2>
+            <div class="summary-section">
+                <div class="summary-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Hybrid</th>
+                                <th>AntLion</th>
+                                <th>Firefly</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <tr><td>Resource Utilization</td><td>98.6%</td><td>65.3%</td><td>72.1%</td></tr>
+                            <tr><td>Response Time</td><td>237.60</td><td>2745.53</td><td>3447.73</td></tr>
+                            <tr><td>Throughput</td><td>0.864</td><td>0.130</td><td>0.142</td></tr>
+                            <tr><td>SLA Compliance</td><td>100.0%</td><td>89.5%</td><td>92.3%</td></tr>
+                            <tr><td>Makespan</td><td>1157.5</td><td>7695.5</td><td>7047.6</td></tr>
+                            <tr><td>Scalability</td><td>95.8</td><td>45.2</td><td>52.7</td></tr>
+                            <tr><td>Migration Time</td><td>0.00</td><td>2.32</td><td>1.87</td></tr>
+                            <tr><td>Execution Time</td><td>6.17</td><td>10.92</td><td>9.62</td></tr>
+                            <tr><td>Energy Cost</td><td>18507.1</td><td>38119.8</td><td>42345.5</td></tr>
+                            <tr><td>Load Balance Score</td><td>95.1</td><td>58.3</td><td>62.8</td></tr>
+                            <tr><td>Success Rate</td><td>100.0%</td><td>87.5%</td><td>91.2%</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="summary-actions">
+                    <h3>Summary</h3>
+                    <div class="summary-info">
+                        <div class="info-item">
+                            <span class="info-label">Algorithm</span>
+                            <span class="info-value" id="summaryAlgorithm">Hybrid FAO</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Tasks</span>
+                            <span class="info-value" id="summaryTasks">50</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">VMs</span>
+                            <span class="info-value" id="summaryVMs">10</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Avg Response Time</span>
+                            <span class="info-value" id="summaryResponseTime">1.45 seconds</span>
+                        </div>
+                    </div>
+                    <button class="btn-download" onclick="downloadReport()">Download Report</button>
+                    <button class="btn-back" onclick="window.location.href='/dashboard'">Back to Dashboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // Load results from sessionStorage
+        async function loadResults() {
+            const resultsData = sessionStorage.getItem('optimizationResults');
+            const configData = sessionStorage.getItem('optimizationConfig');
+
+            if (!resultsData) {
+                // No results found - show message
+                document.getElementById('resultsContent').style.display = 'none';
+                document.getElementById('noDataMessage').style.display = 'block';
+                return false;
+            }
+
+            const results = JSON.parse(resultsData);
+            const config = JSON.parse(configData);
+
+            // Update metric cards
+            document.getElementById('metricResponseTime').innerHTML =
+                `${(results.response_time / 1000).toFixed(2)}<span class="metric-unit">s</span>`;
+
+            document.getElementById('metricEnergy').innerHTML =
+                `${(results.energy_cost / 1000).toFixed(1)}<span class="metric-unit">kWh</span>`;
+
+            document.getElementById('metricMakespan').innerHTML =
+                `${results.makespan.toFixed(0)}<span class="metric-unit">s</span>`;
+
+            document.getElementById('metricUtilization').innerHTML =
+                `${results.resource_utilization.toFixed(0)}<span class="metric-unit">%</span>`;
+
+            // Update summary info
+            updateSummaryInfo(config, results);
+
+            // Load comparison data for charts
+            await loadComparisonData(config);
+
+            return true;
+        }
+
+        // Load comparison data for the current configuration
+        async function loadComparisonData(config) {
+            try {
+                const params = new URLSearchParams({
+                    num_tasks: config.num_tasks,
+                    num_vms: config.num_vms
+                });
+                const response = await fetch(`/api/get-comparison?${params}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const comparisonResults = data.results;
+
+                    // Update table with comparison data
+                    updateComparisonTable(comparisonResults);
+
+                    // Update charts with comparison data
+                    updateChartsWithComparison(comparisonResults);
+                }
+            } catch (error) {
+                console.error('Failed to load comparison data:', error);
+                // Fallback to single algorithm results
+                updateComparisonTable({hybrid: JSON.parse(sessionStorage.getItem('optimizationResults'))});
+            }
+        }
+
+        function updateComparisonTable(comparisonResults) {
+            // Update all columns (Hybrid, AntLion, Firefly) with comparison data
+            const rows = document.querySelectorAll('#resultsTableBody tr');
+            const algorithms = ['hybrid', 'antlion', 'firefly'];
+
+            rows.forEach((row, index) => {
+                const cells = row.cells;
+                const metricKey = getMetricKey(index);
+
+                algorithms.forEach((alg, algIndex) => {
+                    const cellIndex = algIndex + 1; // Skip first column (metric name)
+                    if (cells[cellIndex] && comparisonResults[alg]) {
+                        const value = comparisonResults[alg][metricKey];
+                        if (value !== undefined) {
+                            let formattedValue = value.toFixed(getDecimalPlaces(metricKey));
+                            if (metricKey.includes('Utilization') || metricKey.includes('Compliance') || metricKey.includes('Rate')) {
+                                formattedValue += '%';
+                            }
+                            cells[cellIndex].textContent = formattedValue;
+                        }
+                    }
+                });
+            });
+        }
+
+        function getMetricKey(index) {
+            const metricKeys = [
+                'Resource_Utilization',
+                'Response_Time',
+                'Throughput',
+                'SLA_Compliance',
+                'Makespan',
+                'Scalability',
+                'Migration_Time',
+                'Execution_Time',
+                'Energy_Cost',
+                'Load_Balance_Score',
+                'Success_Rate'
+            ];
+            return metricKeys[index] || '';
+        }
+
+        function getDecimalPlaces(metricKey) {
+            if (metricKey.includes('Throughput')) return 3;
+            if (metricKey.includes('Time') || metricKey.includes('Cost') || metricKey.includes('Makespan')) return 1;
+            if (metricKey.includes('Utilization') || metricKey.includes('Compliance') || metricKey.includes('Rate') || metricKey.includes('Score')) return 1;
+            return 2;
+        }
+
+        function updateSummaryInfo(config, results) {
+            const algorithmNames = {
+                'hybrid': 'Hybrid FAO',
+                'firefly': 'Firefly Algorithm',
+                'antlion': 'AntLion Optimizer'
+            };
+            
+            document.getElementById('summaryAlgorithm').textContent = 
+                algorithmNames[config.algorithm] || config.algorithm;
+            
+            document.getElementById('summaryTasks').textContent = config.num_tasks;
+            document.getElementById('summaryVMs').textContent = config.num_vms;
+            
+            document.getElementById('summaryResponseTime').textContent = 
+                `${(results.response_time / 1000).toFixed(2)} seconds`;
+        }
+
+        function updateCharts(results) {
+            // Update chart data with actual results
+            if (window.resourceChart) {
+                window.resourceChart.data.datasets[0].data[0] = results.resource_utilization;
+                window.resourceChart.update();
+            }
+
+            if (window.responseChart) {
+                window.responseChart.data.datasets[0].data[0] = results.response_time;
+                window.responseChart.update();
+            }
+
+            if (window.throughputChart) {
+                window.throughputChart.data.datasets[0].data[0] = results.throughput;
+                window.throughputChart.update();
+            }
+
+            if (window.energyChart) {
+                window.energyChart.data.datasets[0].data[0] = results.energy_cost;
+                window.energyChart.update();
+            }
+
+            if (window.makespanChart) {
+                window.makespanChart.data.datasets[0].data[0] = results.makespan;
+                window.makespanChart.update();
+            }
+
+            if (window.loadBalanceChart) {
+                window.loadBalanceChart.data.datasets[0].data[0] = results.load_balance_score;
+                window.loadBalanceChart.update();
+            }
+        }
+
+        function updateChartsWithComparison(comparisonResults) {
+            // Update all charts with comparison data from all three algorithms
+            const algorithms = ['hybrid', 'antlion', 'firefly'];
+
+            // Resource Utilization Chart
+            if (window.resourceChart) {
+                window.resourceChart.data.datasets[0].data = algorithms.map(alg =>
+                    comparisonResults[alg]?.Resource_Utilization || 0
+                );
+                window.resourceChart.update();
+            }
+
+            // Response Time Chart
+            if (window.responseChart) {
+                window.responseChart.data.datasets[0].data = algorithms.map(alg =>
+                    comparisonResults[alg]?.Response_Time || 0
+                );
+                window.responseChart.update();
+            }
+
+            // Throughput Chart
+            if (window.throughputChart) {
+                window.throughputChart.data.datasets[0].data = algorithms.map(alg =>
+                    comparisonResults[alg]?.Throughput || 0
+                );
+                window.throughputChart.update();
+            }
+
+            // Energy Cost Chart
+            if (window.energyChart) {
+                window.energyChart.data.datasets[0].data = algorithms.map(alg =>
+                    comparisonResults[alg]?.Energy_Cost || 0
+                );
+                window.energyChart.update();
+            }
+
+            // Makespan Chart
+            if (window.makespanChart) {
+                window.makespanChart.data.datasets[0].data = algorithms.map(alg =>
+                    comparisonResults[alg]?.Makespan || 0
+                );
+                window.makespanChart.update();
+            }
+
+            // Load Balance Chart
+            if (window.loadBalanceChart) {
+                window.loadBalanceChart.data.datasets[0].data = algorithms.map(alg =>
+                    comparisonResults[alg]?.Load_Balance_Score || 0
+                );
+                window.loadBalanceChart.update();
+            }
+
+            // Update convergence chart with actual convergence data
+            if (window.convergenceChart && comparisonResults.convergence) {
+                const hybridData = comparisonResults.convergence.hybrid || [];
+                const antlionData = comparisonResults.convergence.antlion || [];
+                const fireflyData = comparisonResults.convergence.firefly || [];
+
+                // Find the maximum length of convergence data
+                const maxLength = Math.max(hybridData.length, antlionData.length, fireflyData.length);
+
+                // Update labels to match the data length
+                window.convergenceChart.data.labels = Array.from({length: maxLength}, (_, i) => i + 1);
+
+                // Update datasets
+                window.convergenceChart.data.datasets[0].data = hybridData;
+                window.convergenceChart.data.datasets[1].data = antlionData;
+                window.convergenceChart.data.datasets[2].data = fireflyData;
+
+                window.convergenceChart.update();
+            }
+
+            // Hide loading message and show chart container
+            document.getElementById('loadingMessage').style.display = 'none';
+            document.getElementById('chartContainer').style.display = 'block';
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            const chartColors = {
+                hybrid: 'rgba(255, 153, 153, 0.8)',
+                antlion: 'rgba(153, 204, 204, 0.8)',
+                firefly: 'rgba(153, 204, 170, 0.8)'
+            };
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: { color: '#ffffff' }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: { color: '#8899aa' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    },
+                    x: {
+                        ticks: { color: '#8899aa' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                    }
+                }
+            };
+
+            // Convergence Chart
+            new Chart(document.getElementById('convergenceChart'), {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 100}, (_, i) => i),
+                    datasets: [{
+                        label: 'Hybrid',
+                        data: Array.from({length: 100}, (_, i) => 12000 - i * 50),
+                        borderColor: '#FF6B6B',
+                        backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'AntLion',
+                        data: Array.from({length: 100}, (_, i) => 11000 - i * 20),
+                        borderColor: '#4ECDC4',
+                        backgroundColor: 'rgba(78, 205, 196, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'Firefly',
+                        data: Array.from({length: 100}, (_, i) => 10500 - i * 15),
+                        borderColor: '#45B7D1',
+                        backgroundColor: 'rgba(69, 183, 209, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    ...chartOptions,
+                    plugins: {
+                        ...chartOptions.plugins,
+                        title: { display: true, text: 'Convergence Comparison', color: '#ffffff' }
+                    }
+                }
+            });
+
+            // Resource Utilization Chart
+            window.resourceChart = new Chart(document.getElementById('resourceChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Hybrid', 'AntLion', 'Firefly'],
+                    datasets: [{
+                        data: [98.6, 65.3, 72.1],
+                        backgroundColor: [chartColors.hybrid, chartColors.antlion, chartColors.firefly]
+                    }]
+                },
+                options: { ...chartOptions, plugins: { legend: { display: false } } }
+            });
+
+            // Response Time Chart
+            window.responseChart = new Chart(document.getElementById('responseChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Hybrid', 'AntLion', 'Firefly'],
+                    datasets: [{
+                        data: [237.60, 2745.53, 3447.73],
+                        backgroundColor: [chartColors.hybrid, chartColors.antlion, chartColors.firefly]
+                    }]
+                },
+                options: { ...chartOptions, plugins: { legend: { display: false } } }
+            });
+
+            // Throughput Chart
+            window.throughputChart = new Chart(document.getElementById('throughputChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Hybrid', 'AntLion', 'Firefly'],
+                    datasets: [{
+                        data: [0.864, 0.130, 0.142],
+                        backgroundColor: [chartColors.hybrid, chartColors.antlion, chartColors.firefly]
+                    }]
+                },
+                options: { ...chartOptions, plugins: { legend: { display: false } } }
+            });
+
+            // Energy Cost Chart
+            window.energyChart = new Chart(document.getElementById('energyChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Hybrid', 'AntLion', 'Firefly'],
+                    datasets: [{
+                        data: [18507.1, 38119.8, 42345.5],
+                        backgroundColor: [chartColors.hybrid, chartColors.antlion, chartColors.firefly]
+                    }]
+                },
+                options: { ...chartOptions, plugins: { legend: { display: false } } }
+            });
+
+            // Makespan Chart
+            window.makespanChart = new Chart(document.getElementById('makespanChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Hybrid', 'AntLion', 'Firefly'],
+                    datasets: [{
+                        data: [1157.5, 7695.5, 7047.6],
+                        backgroundColor: [chartColors.hybrid, chartColors.antlion, chartColors.firefly]
+                    }]
+                },
+                options: { ...chartOptions, plugins: { legend: { display: false } } }
+            });
+
+            // Load Balance Chart
+            window.loadBalanceChart = new Chart(document.getElementById('loadBalanceChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Hybrid', 'AntLion', 'Firefly'],
+                    datasets: [{
+                        data: [95.1, 58.3, 62.8],
+                        backgroundColor: [chartColors.hybrid, chartColors.antlion, chartColors.firefly]
+                    }]
+                },
+                options: { ...chartOptions, plugins: { legend: { display: false } } }
+            });
+            
+            // Load actual results after charts are created
+            loadResults();
+        });
+
+        function downloadReport() {
+            const resultsData = sessionStorage.getItem('optimizationResults');
+            const configData = sessionStorage.getItem('optimizationConfig');
+            
+            if (!resultsData) {
+                alert('No results available to download');
+                return;
+            }
+            
+            const results = JSON.parse(resultsData);
+            const config = JSON.parse(configData);
+            
+            // Convert to CSV format
+            let csvContent = "HYBRID FIREFLY-ANTLION OPTIMIZER - PERFORMANCE REPORT\n";
+            csvContent += "Generated: " + new Date().toLocaleString() + "\n\n";
+            csvContent += "CONFIGURATION\n";
+            csvContent += "Number of Tasks," + config.num_tasks + "\n";
+            csvContent += "Number of VMs," + config.num_vms + "\n";
+            csvContent += "Algorithm," + config.algorithm + "\n";
+            csvContent += "Response Weight," + (config.response_weight * 100) + "%\n";
+            csvContent += "Energy Weight," + (config.energy_weight * 100) + "%\n";
+            csvContent += "Resource Weight," + (config.resource_weight * 100) + "%\n\n";
+            
+            csvContent += "RESULTS\n";
+            csvContent += "Metric,Value\n";
+            csvContent += "Resource Utilization," + results.resource_utilization?.toFixed(2) + "%\n";
+            csvContent += "Response Time," + results.response_time?.toFixed(2) + " ms\n";
+            csvContent += "Throughput," + results.throughput?.toFixed(3) + " tasks/s\n";
+            csvContent += "SLA Compliance," + results.sla_compliance?.toFixed(2) + "%\n";
+            csvContent += "Makespan," + results.makespan?.toFixed(2) + " s\n";
+            csvContent += "Energy Cost," + results.energy_cost?.toFixed(2) + " J\n";
+            csvContent += "Load Balance Score," + results.load_balance_score?.toFixed(2) + "\n";
+            csvContent += "Success Rate," + results.success_rate?.toFixed(2) + "%\n";
+
+            // Create blob and download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute("href", url);
+            link.setAttribute("download", "Hybrid_FAO_Report_" + Date.now() + ".csv");
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+{% endblock %}

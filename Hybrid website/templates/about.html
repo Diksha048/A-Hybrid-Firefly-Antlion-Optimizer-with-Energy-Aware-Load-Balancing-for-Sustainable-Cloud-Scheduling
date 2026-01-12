@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 0 auto; padding: 60px 20px;">
+
+    <h1 class="page-title" style="text-align:center; font-size:64px; font-weight:bold; margin-bottom:80px;">
+        About
+    </h1>
+
+    <!-- Intro Section -->
+    <div class="intro-section" style="text-align:center; margin-bottom:100px;">
+        <h2 style="font-size:36px; margin-bottom:30px;">Energy-Efficient Cloud Task Scheduling</h2>
+        <p style="font-size:20px; line-height:1.8; max-width:1000px; margin:0 auto; color:#b0bec5;">
+            Hybrid FAO is an optimization algorithm for scheduling tasks in cloud 
+            computing environments. It combines the strengths of the Firefly 
+            and Antlion optimization techniques to reduce energy consumption 
+            while maintaining high performance.
+        </p>
+    </div>
+
+    <!-- Technologies Section -->
+    <div class="tech-section" style="text-align:center; margin-bottom:80px;">
+        <h2 style="font-size:36px; margin-bottom:30px;">Technologies</h2>
+        <p style="font-size:20px; line-height:1.8; color:#b0bec5; margin-bottom:40px;">
+            The system is implemented in Python and leverages popular 
+            libraries such as NumPy, SciPy, and TensorFlow.
+        </p>
+        <a href="#" class="learn-more-btn" 
+           style="background-color:#26a69a; color:#fff; padding:18px 50px; 
+                  font-size:20px; border-radius:8px; text-decoration:none;">
+            Learn More
+        </a>
+    </div>
+
+    <!-- Students Section -->
+    <div class="students-section" style="margin-top:100px;">
+        <h2 style="font-size:42px; margin-bottom:60px; text-align:center;">Students</h2>
+
+        <div class="students-grid" 
+             style="display:grid; grid-template-columns:repeat(3, 1fr); gap:60px; margin-top:40px;">
+
+            <!-- Student 1 -->
+            <div class="student-card" style="text-align:center;">
+                <div class="student-img" 
+                     style="width:200px; height:200px; border-radius:50%; background:#b0bec5; margin:0 auto 25px;">
+                </div>
+                <div class="student-name" style="font-size:28px; font-weight:bold;">João Silva</div>
+                <div class="student-degree" style="font-size:18px; color:#b0bec5;">PhD Candidate</div>
+                <div class="student-field" style="font-size:18px; color:#b0bec5;">Computer Science</div>
+            </div>
+
+            <!-- Student 2 -->
+            <div class="student-card" style="text-align:center;">
+                <div class="student-img" 
+                     style="width:200px; height:200px; border-radius:50%; background:#b0bec5; margin:0 auto 25px;">
+                </div>
+                <div class="student-name" style="font-size:28px; font-weight:bold;">Maria Oliveira</div>
+                <div class="student-degree" style="font-size:18px; color:#b0bec5;">Master's Student</div>
+                <div class="student-field" style="font-size:18px; color:#b0bec5;">Computer Science</div>
+            </div>
+
+            <!-- Student 3 -->
+            <div class="student-card" style="text-align:center;">
+                <div class="student-img" 
+                     style="width:200px; height:200px; border-radius:50%; background:#b0bec5; margin:0 auto 25px;">
+                </div>
+                <div class="student-name" style="font-size:28px; font-weight:bold;">Ravi Patel</div>
+                <div class="student-degree" style="font-size:18px; color:#b0bec5;">Master's Student</div>
+                <div class="student-field" style="font-size:18px; color:#b0bec5;">Electrical Engineering</div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

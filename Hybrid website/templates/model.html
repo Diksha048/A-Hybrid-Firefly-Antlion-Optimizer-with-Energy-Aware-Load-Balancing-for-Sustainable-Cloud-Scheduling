@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(135deg, #0a1628 0%, #1a2332 100%);
+        color: #e0e6ed;
+        min-height: 100vh;
+    }
+    .hero {
+        text-align: center;
+        padding: 4rem 2rem 3rem;
+    }
+
+    .hero h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .hero p {
+        font-size: 1.5rem;
+        color: #94a3b8;
+    }
+
+    .content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 3rem 4rem;
+    }
+
+    .section {
+        margin-bottom: 3rem;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        color: #fff;
+    }
+
+    h3 {
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #e0e6ed;
+    }
+
+    p {
+        font-size: 1.125rem;
+        line-height: 1.8;
+        color: #94a3b8;
+        margin-bottom: 2rem;
+    }
+
+    .fitness-function {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 2rem;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 2rem 0;
+    }
+
+    .formula {
+        font-family: 'Georgia', serif;
+        font-size: 1.5rem;
+        font-style: italic;
+        color: #4ade80;
+        text-align: center;
+        padding: 1.5rem;
+        letter-spacing: 0.5px;
+    }
+
+    .highlight {
+        color: #4ade80;
+    }
+</style>
+
+<div class="hero">
+    <h1>Hybrid Firefly-Antlion Optimizer</h1>
+    <p>Energy-Efficient Cloud Task Scheduling</p>
+</div>
+
+<div class="content">
+    <h2 class="section-title">Model</h2>
+
+    <div class="section">
+        <h3>Problem</h3>
+        <p>Optimizate model forenergy-efficient cloud task scheduling for distributed systems.</p>
+    </div>
+
+    <div class="section">
+        <h3>Hybrid Approach</h3>
+        <p>Combining Firefly Algorithm and Antlion Optimization, a a new space of optimization framework.</p>
+    </div>
+
+    <div class="section">
+        <h3>Fitness Function</h3>
+        <div class="fitness-function">
+            <div class="formula">
+                Fitness = w₁ ResponseTime + w₂ Energy + w₃ ResourceUse
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>Role of Firefly</h3>
+        <p>Firefly Algorithms strengctenogths are mori intestification by exploiting the best solutions.</p>
+    </div>
+
+    <div class="section">
+        <h3>Role of Antlion</h3>
+        <p>Antlion Optimization is a tier an ulrenatioun in each spachencing the search space more thoroughly.</p>
+    </div>
+</div>
+
+{% endblock %}

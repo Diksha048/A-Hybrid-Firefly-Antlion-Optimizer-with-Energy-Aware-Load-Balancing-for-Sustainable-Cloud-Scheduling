@@ -1,0 +1,498 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .header {
+        text-align: center;
+        margin-bottom: 60px;
+        padding: 40px 20px;
+    }
+
+    h1 {
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        color: #8899aa;
+    }
+
+    .impact-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.9);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loading-overlay.active {
+        display: flex;
+    }
+
+    .loader-spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(45, 212, 191, 0.2);
+        border-top-color: #2dd4bf;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .impact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 60px;
+        margin-bottom: 60px;
+    }
+
+    .impact-section {
+        text-align: center;
+    }
+
+    .impact-title {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 40px;
+        color: #ffffff;
+    }
+
+    .impact-subtitle {
+        font-size: 22px;
+        color: #8899aa;
+        margin-bottom: 30px;
+        font-weight: 500;
+    }
+
+    .impact-value {
+        font-size: 120px;
+        font-weight: 700;
+        color: #ffffff;
+        line-height: 1;
+        margin-bottom: 20px;
+        text-shadow: 0 0 40px rgba(45, 212, 191, 0.3);
+        transition: all 0.5s ease;
+    }
+
+    .impact-value.updating {
+        animation: valueUpdate 0.6s ease;
+    }
+
+    @keyframes valueUpdate {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); color: #2dd4bf; }
+    }
+
+    .impact-description {
+        font-size: 20px;
+        color: #8899aa;
+        font-weight: 400;
+    }
+
+    .metrics-breakdown {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 40px;
+        margin-top: 60px;
+    }
+
+    .metrics-breakdown h2 {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .breakdown-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+
+    .breakdown-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 25px;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .breakdown-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(45, 212, 191, 0.2);
+    }
+
+    .breakdown-card h3 {
+        font-size: 18px;
+        color: #2DD4BF;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .breakdown-value {
+        font-size: 36px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .breakdown-comparison {
+        font-size: 14px;
+        color: #8899aa;
+        margin-top: 8px;
+    }
+
+    .comparison-table {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 40px;
+        margin-top: 40px;
+    }
+
+    .comparison-table h2 {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 18px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    th {
+        background: rgba(45, 212, 191, 0.1);
+        font-weight: 600;
+        color: #2DD4BF;
+        font-size: 16px;
+    }
+
+    td {
+        color: #ffffff;
+        font-size: 15px;
+    }
+
+    .highlight-hybrid {
+        background: rgba(45, 212, 191, 0.05);
+        font-weight: 600;
+    }
+
+    .improvement-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #2DD4BF, #10B981);
+        color: #ffffff;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 8px;
+    }
+
+    .no-data-message {
+        text-align: center;
+        padding: 60px 20px;
+        color: #8899aa;
+    }
+
+    .no-data-message h3 {
+        font-size: 24px;
+        margin-bottom: 15px;
+        color: #cbd5e1;
+    }
+
+    .btn-run-optimization {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%);
+        color: #0f172a;
+        font-weight: 700;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-run-optimization:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(45, 212, 191, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .impact-grid {
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        .impact-value {
+            font-size: 80px;
+        }
+
+        h1 {
+            font-size: 36px;
+        }
+
+        .breakdown-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loader-spinner"></div>
+</div>
+
+<div class="header">
+    <h1>Hybrid Firefly–Antlion Optimizer</h1>
+    <p class="subtitle">Energy-Efficient Cloud Task Scheduling</p>
+</div>
+
+<div class="impact-container" id="impactContainer">
+    <!-- Content will be populated dynamically -->
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadImpactData();
+});
+
+async function loadImpactData() {
+    const container = document.getElementById('impactContainer');
+    
+    // Check if we have stored results from a recent optimization
+    const storedResults = sessionStorage.getItem('optimizationResults');
+    
+    if (storedResults) {
+        const results = JSON.parse(storedResults);
+        displayImpactData(results);
+    } else {
+        // If no stored data, try to fetch from API or show default/demo data
+        try {
+            const response = await fetch('/api/get-latest-results');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.results) {
+                    displayImpactData(data.results);
+                } else {
+                    showNoDataMessage();
+                }
+            } else {
+                showNoDataMessage();
+            }
+        } catch (error) {
+            console.error('Error fetching results:', error);
+            showNoDataMessage();
+        }
+    }
+}
+
+function displayImpactData(results) {
+    const container = document.getElementById('impactContainer');
+
+    // Calculate improvements vs AntLion baseline (from backend results)
+    const baselineResponseTime = 254.9; // AntLion Response_Time
+    const baselineEnergy = 36626.4; // AntLion Energy_Cost
+    const baselineThroughput = 0.78; // AntLion Throughput
+
+    const costSavings = ((baselineEnergy - results.energy_cost) / baselineEnergy * 100).toFixed(1);
+    const emissionReduction = ((baselineEnergy - results.energy_cost) / baselineEnergy * 100).toFixed(1);
+    const responseImprovement = ((baselineResponseTime - results.response_time) / baselineResponseTime * 100).toFixed(1);
+    const throughputImprovement = ((results.throughput - baselineThroughput) / baselineThroughput * 100).toFixed(1);
+    
+    container.innerHTML = `
+        <div class="impact-grid">
+            <div class="impact-section">
+                <h2 class="impact-title">Impact</h2>
+                <p class="impact-subtitle">Cost Savings</p>
+                <div class="impact-value">${costSavings}%</div>
+                <p class="impact-description">Compared to baseline</p>
+            </div>
+
+            <div class="impact-section">
+                <h2 class="impact-title">Emission Reduction</h2>
+                <p class="impact-subtitle"></p>
+                <div class="impact-value">${emissionReduction}%</div>
+                <p class="impact-description">Compared to baseline</p>
+            </div>
+        </div>
+
+        <div class="metrics-breakdown">
+            <h2>Performance Improvements</h2>
+            <div class="breakdown-grid">
+                <div class="breakdown-card">
+                    <h3>Response Time Reduction</h3>
+                    <div class="breakdown-value">${responseImprovement}%</div>
+                    <p class="breakdown-comparison">From ${baselineResponseTime}s to ${results.response_time.toFixed(2)}s</p>
+                </div>
+
+                <div class="breakdown-card">
+                    <h3>Energy Efficiency</h3>
+                    <div class="breakdown-value">${((baselineEnergy - results.energy_cost) / baselineEnergy * 100).toFixed(1)}%</div>
+                    <p class="breakdown-comparison">From ${baselineEnergy.toFixed(0)} kWh to ${results.energy_cost.toFixed(0)} kWh</p>
+                </div>
+
+                <div class="breakdown-card">
+                    <h3>Resource Utilization</h3>
+                    <div class="breakdown-value">${results.resource_utilization.toFixed(1)}%</div>
+                    <p class="breakdown-comparison">Optimal resource allocation achieved</p>
+                </div>
+
+                <div class="breakdown-card">
+                    <h3>Makespan Improvement</h3>
+                    <div class="breakdown-value">${((254.9 - results.makespan) / 254.9 * 100).toFixed(1)}%</div>
+                    <p class="breakdown-comparison">From 254.9s to ${results.makespan.toFixed(1)}s</p>
+                </div>
+
+                <div class="breakdown-card">
+                    <h3>Throughput Increase</h3>
+                    <div class="breakdown-value">${throughputImprovement}%</div>
+                    <p class="breakdown-comparison">From ${baselineThroughput} to ${results.throughput.toFixed(3)} tasks/sec</p>
+                </div>
+
+                <div class="breakdown-card">
+                    <h3>Load Balance Score</h3>
+                    <div class="breakdown-value">${results.load_balance_score.toFixed(1)}</div>
+                    <p class="breakdown-comparison">Excellent load distribution</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="comparison-table">
+            <h2>Current Run Metrics</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Performance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Response Time (ms)</td>
+                        <td class="highlight-hybrid">${results.response_time.toFixed(2)}</td>
+                        <td><span class="improvement-badge">↓ ${responseImprovement}%</span></td>
+                    </tr>
+                    <tr>
+                        <td>Energy Cost (kWh)</td>
+                        <td class="highlight-hybrid">${results.energy_cost.toFixed(1)}</td>
+                        <td><span class="improvement-badge">↓ ${costSavings}%</span></td>
+                    </tr>
+                    <tr>
+                        <td>Makespan (s)</td>
+                        <td class="highlight-hybrid">${results.makespan.toFixed(1)}</td>
+                        <td><span class="improvement-badge">Optimized</span></td>
+                    </tr>
+                    <tr>
+                        <td>Resource Utilization (%)</td>
+                        <td class="highlight-hybrid">${results.resource_utilization.toFixed(1)}</td>
+                        <td><span class="improvement-badge">↑ High</span></td>
+                    </tr>
+                    <tr>
+                        <td>Throughput (tasks/s)</td>
+                        <td class="highlight-hybrid">${results.throughput.toFixed(3)}</td>
+                        <td><span class="improvement-badge">↑ Improved</span></td>
+                    </tr>
+                    <tr>
+                        <td>Execution Time (s)</td>
+                        <td class="highlight-hybrid">${results.execution_time ? results.execution_time.toFixed(2) : 'N/A'}</td>
+                        <td><span class="improvement-badge">Fast</span></td>
+                    </tr>
+                    <tr>
+                        <td>Load Balance Score</td>
+                        <td class="highlight-hybrid">${results.load_balance_score.toFixed(1)}</td>
+                        <td><span class="improvement-badge">↑ Excellent</span></td>
+                    </tr>
+                    <tr>
+                        <td>SLA Compliance (%)</td>
+                        <td class="highlight-hybrid">${results.sla_compliance.toFixed(1)}</td>
+                        <td><span class="improvement-badge">✓ Compliant</span></td>
+                    </tr>
+                    <tr>
+                        <td>Success Rate (%)</td>
+                        <td class="highlight-hybrid">${results.success_rate.toFixed(1)}</td>
+                        <td><span class="improvement-badge">✓ Reliable</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="metrics-breakdown" style="margin-top: 40px;">
+            <h2>Real-World Impact</h2>
+            <div class="breakdown-grid">
+                <div class="breakdown-card">
+                    <h3>💰 Annual Cost Savings</h3>
+                    <div class="breakdown-value">$${((baselineEnergy - results.energy_cost) * 0.15 * 365).toFixed(0)}K</div>
+                    <p class="breakdown-comparison">Based on current energy rates @ $0.15/kWh</p>
+                </div>
+
+                <div class="breakdown-card">
+                    <h3>🌱 CO₂ Emission Reduction</h3>
+                    <div class="breakdown-value">${(((baselineEnergy - results.energy_cost) * 0.0005 * 365) / 1000).toFixed(1)} tons</div>
+                    <p class="breakdown-comparison">Annual reduction based on energy savings</p>
+                </div>
+
+                <div class="breakdown-card">
+                    <h3>⚡ Efficiency Gain</h3>
+                    <div class="breakdown-value">${((results.throughput / 0.130 - 1) * 100).toFixed(0)}%</div>
+                    <p class="breakdown-comparison">Throughput increase over baseline</p>
+                </div>
+
+                <div class="breakdown-card">
+                    <h3>🎯 Reliability</h3>
+                    <div class="breakdown-value">${results.sla_compliance.toFixed(1)}%</div>
+                    <p class="breakdown-comparison">SLA compliance rate</p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add animation to impact values
+    setTimeout(() => {
+        document.querySelectorAll('.impact-value').forEach(el => {
+            el.classList.add('updating');
+        });
+    }, 100);
+}
+
+function showNoDataMessage() {
+    const container = document.getElementById('impactContainer');
+    container.innerHTML = `
+        <div class="no-data-message">
+            <h3>No Optimization Data Available</h3>
+            <p>Run an optimization from the dashboard to see the impact analysis.</p>
+            <a href="/dashboard" class="btn-run-optimization">Go to Dashboard</a>
+        </div>
+    `;
+}
+</script>
+
+{% endblock %}

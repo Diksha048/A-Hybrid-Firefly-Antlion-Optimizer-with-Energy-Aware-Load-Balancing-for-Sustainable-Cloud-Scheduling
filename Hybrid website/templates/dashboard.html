@@ -1,0 +1,614 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Hybrid FAO{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1 class="dashboard-title">Hybrid Firefly-Antlion Optimizer</h1>
+        <p class="dashboard-subtitle">Energy-Efficient Cloud Task Scheduling</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- User Inputs Section -->
+        <div class="card">
+            <h2 class="card-title">User Inputs</h2>
+            <form id="optimizationForm">
+                <div class="form-group">
+                    <label for="numTasks">Number of Tasks</label>
+                    <input type="number" id="numTasks" name="numTasks" value="50" min="10" max="1000" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="numVMs">Number of VMs</label>
+                    <input type="number" id="numVMs" name="numVMs" value="10" min="5" max="220" class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="algorithm">Select Algorithm</label>
+                    <select id="algorithm" name="algorithm" class="form-select">
+                        <option value="firefly">Firefly</option>
+                        <option value="antlion">AntLion</option>
+                        <option value="hybrid" selected>Hybrid FA + ALO</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="responseWeight">Response Time</label>
+                    <div class="slider-container">
+                        <input type="range" id="responseWeight" name="responseWeight" min="0" max="100" value="70" class="slider">
+                        <span class="slider-value" id="responseValue">70%</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="energyWeight">Energy</label>
+                    <div class="slider-container">
+                        <input type="range" id="energyWeight" name="energyWeight" min="0" max="100" value="50" class="slider">
+                        <span class="slider-value" id="energyValue">50%</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="resourceWeight">Resource Use</label>
+                    <div class="slider-container">
+                        <input type="range" id="resourceWeight" name="resourceWeight" min="0" max="100" value="40" class="slider">
+                        <span class="slider-value" id="resourceValue">40%</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="runBtn">
+                    <span id="btnText">Run Optimization</span>
+                    <span id="btnLoader" class="loader" style="display: none;"></span>
+                </button>
+            </form>
+        </div>
+
+        <!-- System Workflow Section -->
+        <div class="card">
+            <h2 class="card-title">System Workflow</h2>
+            <div class="workflow-container">
+                <div class="workflow-step">
+                    <div class="workflow-box">Task List</div>
+                    <div class="workflow-arrow">↓</div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="workflow-box">Preprocessing</div>
+                    <div class="workflow-arrow">↓</div>
+                </div>
+                
+                <div class="workflow-step active">
+                    <div class="workflow-box highlight">Hybrid FA + ALO</div>
+                    <div class="workflow-arrow">↓</div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="workflow-box">Scheduler</div>
+                    <div class="workflow-arrow">↓</div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="workflow-box">Energy Analysis</div>
+                    <div class="workflow-arrow">↓</div>
+                </div>
+                
+                <div class="workflow-step">
+                    <div class="workflow-box">Output</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output Results Section -->
+        <div class="card">
+            <h2 class="card-title">Output Results</h2>
+            <div class="results-grid">
+                <div class="result-item">
+                    <div class="result-label">Response Time</div>
+                    <div class="result-value" id="resultResponseTime">0 ms</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-label">Energy</div>
+                    <div class="result-value" id="resultEnergy">0 J</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-label">Makespan</div>
+                    <div class="result-value" id="resultMakespan">0 s</div>
+                </div>
+                
+                <div class="result-item">
+                    <div class="result-label">Utilization</div>
+                    <div class="result-value" id="resultUtilization">0 %</div>
+                </div>
+            </div>
+
+            <div class="results-details" id="detailedResults" style="display: none;">
+                <h3 class="results-subtitle">Detailed Metrics</h3>
+                <div class="metrics-grid">
+                    <div class="metric-row">
+                        <span class="metric-label">Throughput:</span>
+                        <span class="metric-value" id="metricThroughput">-</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">SLA Compliance:</span>
+                        <span class="metric-value" id="metricSLA">-</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Load Balance Score:</span>
+                        <span class="metric-value" id="metricLoadBalance">-</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Success Rate:</span>
+                        <span class="metric-value" id="metricSuccess">-</span>
+                    </div>
+                </div>
+
+                <!-- View Detailed Results Button -->
+                <button class="btn-view-details" id="viewDetailsBtn" style="display: none;" onclick="window.location.href='/results'">
+                    View Detailed Analysis →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Messages -->
+    <div id="statusMessage" class="status-message" style="display: none;">
+        <span id="statusText"></span>
+    </div>
+</div>
+
+<style>
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.dashboard-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.dashboard-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-subtitle {
+    font-size: 1.25rem;
+    color: #94a3b8;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: #cbd5e1;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-input, .form-select {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus, .form-select:focus {
+    outline: none;
+    border-color: #2dd4bf;
+    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.1);
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.slider {
+    flex: 1;
+    height: 6px;
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #2dd4bf;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px rgba(45, 212, 191, 0.5);
+}
+
+.slider-value {
+    min-width: 50px;
+    text-align: right;
+    color: #2dd4bf;
+    font-weight: 600;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, #2dd4bf 0%, #14b8a6 100%);
+    color: #0f172a;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(45, 212, 191, 0.3);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-view-details {
+    width: 100%;
+    padding: 0.875rem;
+    margin-top: 1rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-view-details:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+}
+
+.loader {
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(15, 23, 42, 0.3);
+    border-top-color: #0f172a;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.workflow-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+}
+
+.workflow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.workflow-box {
+    background: rgba(30, 41, 59, 0.5);
+    border: 2px solid rgba(148, 163, 184, 0.3);
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    color: #cbd5e1;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.3s ease;
+    min-width: 200px;
+}
+
+.workflow-box.highlight {
+    background: linear-gradient(135deg, rgba(45, 212, 191, 0.2) 0%, rgba(20, 184, 166, 0.2) 100%);
+    border-color: #2dd4bf;
+    color: #2dd4bf;
+    box-shadow: 0 0 20px rgba(45, 212, 191, 0.3);
+}
+
+.workflow-arrow {
+    color: #2dd4bf;
+    font-size: 1.5rem;
+    margin: 0.25rem 0;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.result-item {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.result-item.updated {
+    animation: pulse 0.6s ease;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(45, 212, 191, 0.4);
+    }
+}
+
+.result-label {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.result-value {
+    color: #2dd4bf;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.results-details {
+    border-top: 1px solid rgba(148, 163, 184, 0.2);
+    padding-top: 1rem;
+    margin-top: 1rem;
+}
+
+.results-subtitle {
+    color: #cbd5e1;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.metrics-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.metric-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem;
+    background: rgba(30, 41, 59, 0.3);
+    border-radius: 6px;
+}
+
+.metric-label {
+    color: #94a3b8;
+}
+
+.metric-value {
+    color: #fff;
+    font-weight: 600;
+}
+
+.status-message {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 1.5rem;
+    background: rgba(45, 212, 191, 0.9);
+    color: #0f172a;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+    z-index: 1000;
+}
+
+.status-message.error {
+    background: rgba(239, 68, 68, 0.9);
+    color: #fff;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// Update slider values
+document.querySelectorAll('.slider').forEach(slider => {
+    const valueDisplay = document.getElementById(slider.id.replace('Weight', 'Value'));
+    slider.addEventListener('input', (e) => {
+        valueDisplay.textContent = e.target.value + '%';
+    });
+});
+
+// Form submission
+document.getElementById('optimizationForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const runBtn = document.getElementById('runBtn');
+    const btnText = document.getElementById('btnText');
+    const btnLoader = document.getElementById('btnLoader');
+    
+    // Disable button and show loader
+    runBtn.disabled = true;
+    btnText.style.display = 'none';
+    btnLoader.style.display = 'block';
+    
+    // Collect form data
+    const formData = {
+        num_tasks: parseInt(document.getElementById('numTasks').value),
+        num_vms: parseInt(document.getElementById('numVMs').value),
+        algorithm: document.getElementById('algorithm').value,
+        response_weight: parseFloat(document.getElementById('responseWeight').value) / 100,
+        energy_weight: parseFloat(document.getElementById('energyWeight').value) / 100,
+        resource_weight: parseFloat(document.getElementById('resourceWeight').value) / 100
+    };
+    
+    try {
+        const response = await fetch('/api/run-optimization', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Store results in sessionStorage for the results page
+            sessionStorage.setItem('optimizationResults', JSON.stringify(data.results));
+            sessionStorage.setItem('optimizationConfig', JSON.stringify(formData));
+            
+            // Update dashboard results with animation
+            updateDashboardResults(data.results);
+            
+            // Show success message
+            showStatus('Optimization completed successfully!', 'success');
+            
+            // Show view details button
+            document.getElementById('viewDetailsBtn').style.display = 'block';
+            
+        } else {
+            showStatus('Error: ' + data.message, 'error');
+        }
+    } catch (error) {
+        showStatus('Failed to run optimization: ' + error.message, 'error');
+    } finally {
+        // Re-enable button
+        runBtn.disabled = false;
+        btnText.style.display = 'block';
+        btnLoader.style.display = 'none';
+    }
+});
+
+function updateDashboardResults(results) {
+    // Add animation class
+    const resultItems = document.querySelectorAll('.result-item');
+    resultItems.forEach(item => item.classList.add('updated'));
+    
+    // Update main results
+    document.getElementById('resultResponseTime').textContent = 
+        results.response_time.toFixed(2) + ' ms';
+    document.getElementById('resultEnergy').textContent = 
+        results.energy_cost.toFixed(0) + ' J';
+    document.getElementById('resultMakespan').textContent = 
+        results.makespan.toFixed(2) + ' s';
+    document.getElementById('resultUtilization').textContent = 
+        results.resource_utilization.toFixed(1) + ' %';
+    
+    // Update detailed metrics
+    document.getElementById('metricThroughput').textContent = 
+        results.throughput.toFixed(3) + ' tasks/s';
+    document.getElementById('metricSLA').textContent = 
+        results.sla_compliance.toFixed(1) + '%';
+    document.getElementById('metricLoadBalance').textContent = 
+        results.load_balance_score.toFixed(1);
+    document.getElementById('metricSuccess').textContent = 
+        results.success_rate.toFixed(1) + '%';
+    
+    // Show detailed results section
+    document.getElementById('detailedResults').style.display = 'block';
+    
+    // Remove animation class after animation completes
+    setTimeout(() => {
+        resultItems.forEach(item => item.classList.remove('updated'));
+    }, 600);
+    
+    // Smooth scroll to results
+    document.querySelector('.card:nth-child(3)').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'nearest' 
+    });
+}
+
+function showStatus(message, type) {
+    const statusDiv = document.getElementById('statusMessage');
+    const statusText = document.getElementById('statusText');
+    
+    statusText.textContent = message;
+    statusDiv.className = 'status-message' + (type === 'error' ? ' error' : '');
+    statusDiv.style.display = 'block';
+    
+    setTimeout(() => {
+        statusDiv.style.display = 'none';
+    }, 5000);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Hybrid FAO{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Navigation Bar Styles */
+        .navbar {
+            background-color: #0a1929;
+            border-bottom: 1px solid #1e3a5f;
+            padding: 0;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 80px;  /* Increased space for large logo */
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .nav-brand img {
+            height: 80px;      /* Increased size */
+            width: auto;       /* Keeps natural aspect ratio */
+            object-fit: contain;
+            filter: brightness(1.2) contrast(1.3);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-item {
+            margin: 0;
+        }
+
+        .nav-link {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.3s;
+            padding: 5px 0;
+        }
+
+        .nav-link:hover {
+            color: #26a69a;
+        }
+
+        .nav-link.active {
+            color: #26a69a;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: #0a1929;
+            padding: 20px 0;
+            border-top: 1px solid #1e3a5f;
+        }
+
+        .footer-container {
+            max-width: 100%;
+            margin: 0 auto;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .footer p {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .footer-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 20px 30px;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-menu {
+                gap: 20px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .nav-link {
+                font-size: 16px;
+            }
+
+            .nav-brand img {
+                height: 60px; /* Adjust slightly smaller on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="nav-brand">
+                <img src="{{ url_for('static', filename='images/log.png') }}" alt="Hybrid FAO Logo">
+            </a>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="{{ url_for('home') }}" class="nav-link {% if request.endpoint == 'home' %}active{% endif %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('results') }}" class="nav-link {% if request.endpoint == 'results' %}active{% endif %}">Results</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('model_page') }}" class="nav-link {% if request.endpoint == 'model_page' %}active{% endif %}">Model</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('impact_page') }}" class="nav-link {% if request.endpoint == 'impact_page' %}active{% endif %}">Impact</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ url_for('about_page') }}" class="nav-link {% if request.endpoint == 'about_page' %}active{% endif %}">About</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2024 Hybrid Firefly-Antlion Optimizer. All rights reserved.</p>
+            <p class="footer-subtitle">Energy-Efficient Cloud Task Scheduling Research Project</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

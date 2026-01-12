@@ -1,0 +1,417 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .hero {
+        text-align: center;
+        padding: 80px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .hero-title {
+        font-size: 56px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #ffffff;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: 32px;
+        color: #2DD4BF;
+        margin-bottom: 30px;
+        font-weight: 500;
+    }
+
+    .hero-description {
+        font-size: 18px;
+        color: #8899aa;
+        max-width: 800px;
+        margin: 0 auto 40px;
+        line-height: 1.6;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 16px 40px;
+        font-size: 18px;
+        font-weight: 600;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #2DD4BF, #10B981);
+        color: #ffffff;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(45, 212, 191, 0.4);
+    }
+
+    .btn-secondary {
+        background: transparent;
+        color: #ffffff;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #2DD4BF;
+    }
+
+    .features-section {
+        max-width: 1400px;
+        margin: 80px auto;
+        padding: 0 20px;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 40px 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        background: rgba(255, 255, 255, 0.05);
+        border-color: #2DD4BF;
+        box-shadow: 0 15px 40px rgba(45, 212, 191, 0.2);
+    }
+
+    .feature-icon {
+        font-size: 64px;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .feature-title {
+        font-size: 22px;
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 15px;
+    }
+
+    .feature-description {
+        font-size: 15px;
+        color: #8899aa;
+        line-height: 1.6;
+    }
+
+    .stats-section {
+        max-width: 1200px;
+        margin: 80px auto;
+        padding: 60px 20px;
+        text-align: center;
+        background: rgba(45, 212, 191, 0.05);
+        border-radius: 24px;
+        border: 1px solid rgba(45, 212, 191, 0.2);
+    }
+
+    .section-title {
+        font-size: 42px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 50px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 40px;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stat-value {
+        font-size: 56px;
+        font-weight: 700;
+        color: #2DD4BF;
+        margin-bottom: 10px;
+        text-shadow: 0 0 30px rgba(45, 212, 191, 0.3);
+    }
+
+    .stat-label {
+        font-size: 16px;
+        color: #8899aa;
+        font-weight: 500;
+    }
+
+    .stat-comparison {
+        font-size: 12px;
+        color: #2DD4BF;
+        margin-top: 5px;
+        font-weight: 600;
+    }
+
+    .algorithm-section {
+        max-width: 1400px;
+        margin: 80px auto;
+        padding: 0 20px;
+        text-align: center;
+    }
+
+    .algorithm-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        margin-top: 50px;
+    }
+
+    .algorithm-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 40px 30px;
+        text-align: left;
+        transition: all 0.3s ease;
+    }
+
+    .algorithm-card:hover {
+        transform: translateY(-5px);
+        border-color: #2DD4BF;
+        box-shadow: 0 10px 30px rgba(45, 212, 191, 0.2);
+    }
+
+    .algorithm-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .algorithm-icon {
+        font-size: 48px;
+    }
+
+    .algorithm-name {
+        font-size: 24px;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    .algorithm-features {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0 0 0;
+    }
+
+    .algorithm-features li {
+        padding: 10px 0;
+        color: #8899aa;
+        font-size: 15px;
+        position: relative;
+        padding-left: 25px;
+    }
+
+    .algorithm-features li:before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #2DD4BF;
+        font-weight: bold;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in {
+        animation: fadeIn 0.8s ease-out forwards;
+        opacity: 0;
+    }
+
+    .fade-in:nth-child(1) { animation-delay: 0.1s; }
+    .fade-in:nth-child(2) { animation-delay: 0.2s; }
+    .fade-in:nth-child(3) { animation-delay: 0.3s; }
+    .fade-in:nth-child(4) { animation-delay: 0.4s; }
+    .fade-in:nth-child(5) { animation-delay: 0.5s; }
+    .fade-in:nth-child(6) { animation-delay: 0.6s; }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 36px;
+        }
+
+        .hero-subtitle {
+            font-size: 24px;
+        }
+
+        .section-title {
+            font-size: 32px;
+        }
+
+        .stat-value {
+            font-size: 40px;
+        }
+    }
+</style>
+
+<div class="hero">
+    <h1 class="hero-title fade-in">Hybrid Firefly–Antlion Optimizer</h1>
+    <p class="hero-subtitle fade-in">Energy-Efficient Cloud Task Scheduling</p>
+    <p class="hero-description fade-in">
+        A cutting-edge optimization framework combining Firefly Algorithm and Ant Lion Optimizer 
+        for intelligent cloud resource allocation, reducing energy consumption by up to 56% while 
+        maintaining superior performance metrics.
+    </p>
+    <div class="hero-buttons">
+        <a href="/dashboard" class="btn btn-primary fade-in">Launch System</a>
+        <a href="/model" class="btn btn-secondary fade-in">Documentation</a>
+    </div>
+</div>
+
+<div class="features-section">
+    <div class="features-grid">
+        <div class="feature-card fade-in">
+            <span class="feature-icon">📅</span>
+            <h3 class="feature-title">Smart Scheduling</h3>
+            <p class="feature-description">
+                Intelligent task-to-VM assignment based on CPU, memory requirements, and priority levels for optimal resource allocation.
+            </p>
+        </div>
+
+        <div class="feature-card fade-in">
+            <span class="feature-icon">⚡</span>
+            <h3 class="feature-title">Energy Optimization</h3>
+            <p class="feature-description">
+                Reduces energy consumption by 56% compared to traditional scheduling algorithms while maintaining performance.
+            </p>
+        </div>
+
+        <div class="feature-card fade-in">
+            <span class="feature-icon">🔗</span>
+            <h3 class="feature-title">Hybrid AI Engine</h3>
+            <p class="feature-description">
+                Combines Firefly and Ant Lion algorithms for superior exploration and exploitation capabilities.
+            </p>
+        </div>
+
+        <div class="feature-card fade-in">
+            <span class="feature-icon">📈</span>
+            <h3 class="feature-title">Real-time Performance</h3>
+            <p class="feature-description">
+                Live monitoring and visualization of optimization metrics with 98.6% resource utilization efficiency.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="stats-section fade-in">
+    <h2 class="section-title">Performance Highlights</h2>
+    <div class="stats-grid">
+        <div class="stat-item">
+            <span class="stat-value">68.2%</span>
+            <span class="stat-label">Resource Utilization</span>
+            <span class="stat-comparison">vs 96.4% AntLion</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">42.1%</span>
+            <span class="stat-label">Energy Savings</span>
+            <span class="stat-comparison">vs AntLion baseline</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">212ms</span>
+            <span class="stat-label">Avg Response Time</span>
+            <span class="stat-comparison">vs 255ms AntLion</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value">0.948</span>
+            <span class="stat-label">Throughput (tasks/s)</span>
+            <span class="stat-comparison">vs 0.78 AntLion</span>
+        </div>
+    </div>
+</div>
+
+<div class="algorithm-section">
+    <h2 class="section-title">How It Works</h2>
+    <div class="algorithm-cards">
+        <div class="algorithm-card fade-in">
+            <div class="algorithm-header">
+                <span class="algorithm-icon">🔥</span>
+                <div>
+                    <h3 class="algorithm-name">Firefly Phase</h3>
+                </div>
+            </div>
+            <p style="color: #8899aa; margin-bottom: 1rem;">
+                Inspired by firefly behavior, agents move toward brighter (better) solutions through 
+                attractiveness-based exploration.
+            </p>
+            <ul class="algorithm-features">
+                <li>Global exploration capability</li>
+                <li>Light intensity-based attraction</li>
+                <li>Dynamic step size adjustment</li>
+            </ul>
+        </div>
+
+        <div class="algorithm-card fade-in">
+            <div class="algorithm-header">
+                <span class="algorithm-icon">🐜</span>
+                <div>
+                    <h3 class="algorithm-name">Ant Lion Phase</h3>
+                </div>
+            </div>
+            <p style="color: #8899aa; margin-bottom: 1rem;">
+                Simulates ant lions' hunting strategy where ants perform random walks toward 
+                elite solutions (ant lions).
+            </p>
+            <ul class="algorithm-features">
+                <li>Elite-guided convergence</li>
+                <li>Random walk exploration</li>
+                <li>Adaptive boundary control</li>
+            </ul>
+        </div>
+
+        <div class="algorithm-card fade-in">
+            <div class="algorithm-header">
+                <span class="algorithm-icon">⚡</span>
+                <div>
+                    <h3 class="algorithm-name">Hybrid Strategy</h3>
+                </div>
+            </div>
+            <p style="color: #8899aa; margin-bottom: 1rem;">
+                Combines both algorithms to leverage exploration (Firefly) in early stages and 
+                exploitation (Ant Lion) in later stages.
+            </p>
+            <ul class="algorithm-features">
+                <li>Best of both worlds</li>
+                <li>Faster convergence</li>
+                <li>Superior solution quality</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
