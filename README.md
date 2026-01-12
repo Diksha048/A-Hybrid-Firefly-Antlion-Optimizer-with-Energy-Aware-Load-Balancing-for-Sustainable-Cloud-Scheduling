@@ -87,20 +87,3 @@ Experimental results show that the proposed **Hybrid Firefly–Antlion Optimizer
 * Improving VM utilization
 * Achieving better load distribution
 * Lowering execution time
-
-Graphs and comparative analysis are available in the `results/` directory.
-
----
-
-## 🚀 Future Enhancements
-
-* Integration with real cloud platforms (AWS, Azure, OpenStack)
-* Support for container-based environments (Docker, Kubernetes)
-* Incorporation of AI-based workload prediction
-* Multi-objective optimization with SLA constraints
-
-
-## 📜 License
-
-This project is developed for **academic and research purposes**. Feel free to use and modify it with proper attribution.
-
